@@ -108,10 +108,10 @@
 			},
 
 			_applyActionMusic : function (component) {
-				var self = this;
+				var me = this;
 
 				component.addEventListener('click', function(){
-					var audio = self._getInstanceAudio();
+					var audio = me._getInstanceAudio();
 
 					if (audio.paused) {
 						audio.play();
@@ -122,7 +122,7 @@
 				});
 
 				component.addEventListener('dblclick', function(){
-					var audio = self._getInstanceAudio();
+					var audio = me._getInstanceAudio();
 					audio.pause();
 					audio.currentTime = 0;
 				});
@@ -152,14 +152,14 @@
 			},
 
 			_applyProgressBarAction : function (div) {
-				var self = this;
+				var me = this;
 				div.addEventListener('click', function (e) {
 					var rolamentoX = document.body.scrollLeft;
 					var boxElemento = this.getBoundingClientRect();
 					var posX = e.clientX - boxElemento.left + rolamentoX;
 					var width = this.clientWidth;
 					var porcentagem = (posX * 100) / width;
-					self._changeAudioByPercent(porcentagem);
+					me._changeAudioByPercent(porcentagem);
 				});
 			},
 
