@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style type="text/css">
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="player1"></div>
+	<div id="player2" style="width: 80%;margin-top: 10px;"></div>
+	<div id="player3" style="width: 60%;margin-top: 10px;"></div>
+	<div id="player4" style="width: 40%;margin-top: 10px;"></div>
+
+	<script type="text/javascript">
+			
+		var Player = function (father, music) {
+			this.father = father;
+			this.music = music;
+			this.audio;
+
+			this.components = [
+
+				{
+					element : document.createElement('div'),
+					style : {
+						width : '100%',
+						height : '80px',
+						'background-color' : '#646464'
+					}
+				},
+
+				{
+					element : document.createElement('div'),
+					style : {
+						width : '20%',
+						height : '80px',
+						display : 'inline-block',
+						'background-color' : '#682268'
+					}
+				},
+
+				{
+					element : document.createElement('div'),
+					style : {
+						width : '80%',
+						height : '80px',
+						display : 'inline-block'
+					}
+				},
+
+				{
+					element : document.createElement('div'),
+					style : {
+						width : '0%',
+						height : '20px',
+						opacity : '0.5',
+						'background-color' : '#682268'
+					}
+				}
+			];
+
+			this._init();
+		};
+
+		Player.fn = Player.prototype = {
+
+			_init : function () {
+				if (this.father instanceof Element) {
+					this.father.appendChild(this._component());
+				}
+			},
+
+			_component : function () {
+				for (var i = 0; i < this.components.length; i++) {
+					this._applyStyle(this.components[i]);
+				}
+
+				var box = this.components[0].element;
+				var playPause = this.components[1].element;
+				var nomeMusica = this.components[2].element;
+				var progressBar = this.components[3].element;
+
+				box.appendChild(playPause);
+				box.appendChild(nomeMusica);
+				nomeMusica.appendChild(progressBar);
+
+				this._applyActionMusic(playPause);
+				this._applyActionAudio(this._getInstanceAudio(), progressBar);
+				this._applyProgressBarAction(nomeMusica);
+
+				return box;
+			},
+
+			_applyStyle : function (obj) {
+				var element = obj.element;
+				var options = obj.style;
+
+				if (options) {
+					for (x in options) {
+						element.style[x] = options[x];
+					}
+				}
+			},
+
+			_applyActionMusic : function (component) {
+				var self = this;
+
+				component.addEventListener('click', function(){
+					var audio = self._getInstanceAudio();
+
+					if (audio.paused) {
+						audio.play();
+					}else{
+						audio.pause();
+					}
+
+				});
+
+				component.addEventListener('dblclick', function(){
+					var audio = self._getInstanceAudio();
+					audio.pause();
+					audio.currentTime = 0;
+				});
+
+			},
+
+			_getInstanceAudio : function () {
+				if (!this.audio) {
+					this.audio = new Audio(this.music);
+				}
+
+				return this.audio;
+			},
+
+			_applyActionAudio : function (audio, div) {
+				audio.addEventListener('timeupdate', function(){
+					var currentTime = audio.currentTime;
+					var duration = audio.duration;
+					var porcentagem = (currentTime * 100) / duration;
+					div.style.width = porcentagem + '%';
+				});
+
+				audio.addEventListener('ended', function(){
+					audio.currentTime = 0;
+				});
+
+			},
+
+			_applyProgressBarAction : function (div) {
+				var self = this;
+				div.addEventListener('click', function (e) {
+					var rolamentoX = document.body.scrollLeft;
+					var boxElemento = this.getBoundingClientRect();
+					var posX = e.clientX - boxElemento.left + rolamentoX;
+					var width = this.clientWidth;
+					var porcentagem = (posX * 100) / width;
+					self._changeAudioByPercent(porcentagem);
+				});
+			},
+
+			_changeAudioByPercent : function (percent) {
+				var audio = this._getInstanceAudio();
+				var duration = audio.duration;
+				audio.currentTime = (duration * percent) / 100;
+			}
+
+		};
+
+		var player = new Player(document.querySelector('#player1'), 'http://html5.justhearit.com/songs/fe/263796/Fetty_Wap_-_My_Way.mp3');
+		var player = new Player(document.querySelector('#player2'), 'http://html5.justhearit.com/songs/fe/263796/Fetty_Wap_-_My_Way.mp3');
+		var player = new Player(document.querySelector('#player3'), 'http://html5.justhearit.com/songs/fe/263796/Fetty_Wap_-_My_Way.mp3');
+		var player = new Player(document.querySelector('#player4'), 'http://html5.justhearit.com/songs/fe/263796/Fetty_Wap_-_My_Way.mp3');
+
+	</script>
+</body>
+</html>
+
+
